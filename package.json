@@ -1,0 +1,23 @@
+{
+  "name": "auto_compressor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node index test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgorokM/AutoCompressor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IgorokM/AutoCompressor/issues"
+  },
+  "homepage": "https://github.com/IgorokM/AutoCompressor#readme"
+}

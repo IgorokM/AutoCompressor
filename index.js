@@ -9,8 +9,14 @@ const path = require("path");
         return;
     }
     const rootDir = argv.slice(2, 3).join();
-    const wDir = path.resolve(rootDir);
-    
-    // const inp = fs.createReadStream(`input.txt`);
-    // const out = fs.createWriteStream("input.txt.gz");
+    const wDir = fs.readdirSync(rootDir);
+    if (Array.isArray(wDir)) {
+        let files = fs.readdirSync(`${rootDir}/${wDir[0]}`);
+        files.map((file) => {
+            let pathToFile = `${rootDir}/${wDir[0]}/${file}`;
+            let r = fs.createReadStream(pathToFile);
+            let w = fs.createWriteStream(`${pathToFile}.gz`);
+            r.pipe(gzip).pipe(w);
+        });
+    }
 })(process);
