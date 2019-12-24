@@ -10,8 +10,9 @@ const path = require("path");
     }
     const root = argv[2];
     console.log(`ROOT DIR: ${root}`);
-    if(!createPathToFile(root)){
-
+    if (!createPathToFile(root)) {
+        exit(-1);
+        console.log('Internal Error');
     }
 })(process);
 
