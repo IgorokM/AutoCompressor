@@ -8,17 +8,27 @@ const path = require("path");
         exit(0);
         return;
     }
-    const rootDir = argv.slice(2, 3).join();
-    const wDir = fs.readdirSync(rootDir);
-    if (Array.isArray(wDir)) {
-        let files = fs.readdirSync(`${rootDir}/${wDir[0]}`);
-        files.map((file) => {
-            let pathToFile = `${rootDir}/${wDir[0]}/${file}`;
-            packZip(pathToFile);
-        });
+    const root = argv[2];
+    console.log(`ROOT DIR: ${root}`);
+    if(!createPathToFile(root)){
+
     }
 })(process);
 
+function createPathToFile(root) {
+    const insideRoot = fs.readdirSync(root);
+    if (!Array.isArray(insideRoot)) return false;
+    for (let item of insideRoot) {
+        let insidePath = path.join(root, item);
+        let stat = fs.statSync(insidePath);
+        if (stat.isFile()) {
+            packZip(insidePath);
+            return true;
+        } else {
+            createPathToFile(insidePath);
+        }
+    }
+}
 function packZip(pathToFile) {
     const r = fs.createReadStream(pathToFile);
     const w = fs.createWriteStream(`${pathToFile}.gz`);
