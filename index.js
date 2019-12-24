@@ -14,9 +14,13 @@ const path = require("path");
         let files = fs.readdirSync(`${rootDir}/${wDir[0]}`);
         files.map((file) => {
             let pathToFile = `${rootDir}/${wDir[0]}/${file}`;
-            let r = fs.createReadStream(pathToFile);
-            let w = fs.createWriteStream(`${pathToFile}.gz`);
-            r.pipe(gzip).pipe(w);
+            packZip(pathToFile);
         });
     }
 })(process);
+
+function packZip(pathToFile) {
+    const r = fs.createReadStream(pathToFile);
+    const w = fs.createWriteStream(`${pathToFile}.gz`);
+    r.pipe(gzip).pipe(w);
+}
