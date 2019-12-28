@@ -7,7 +7,6 @@ const path = require("path");
         return;
     }
     const root = argv[2];
-    console.log(`ROOT DIR: ${root}`);
     if (!run(root)) {
         exit(-1);
         console.log('Internal Error');
@@ -18,26 +17,37 @@ function run(root) {
     const insideRoot = fs.readdirSync(root);
     const stringInsideRoot = insideRoot.join();
     const hasArchive = stringInsideRoot.search(/.gz?/);
-    if (hasArchive === -1) {
-        console.log(`Scanning ${root}`);
-        for (let item of insideRoot) {
-            let insidePath = path.join(root, item);
-            let stat = fs.statSync(insidePath);
-            if (stat.isFile()) {
-                packZip(insidePath);
-                return true;
-            } else if (stat.isDirectory()) {
-                run(insidePath);
+    console.log(`Start Scanning ${root}`);
+    for (let item of insideRoot) {
+        let insidePath = path.join(root, item);
+        let stat = fs.statSync(insidePath);
+        if (stat.isFile()) {
+            if (hasArchive !== -1) {
+                let statGz = fs.statSync(`${insidePath}.gz`);
+                if (stat.mtimeMs > statGz.mtimeMs) {
+                    packZipLog(insidePath, item, stat, statGz);
+                }
+            } else {
+                packZipLog(insidePath);
             }
+            return true;
+        } else if (stat.isDirectory()) {
+            run(insidePath);
         }
-    }else{
-        console.log(`in folder '${root}' not work`);
+
     }
     return true;
 }
-function packZip(pathToFile) {
+
+function packZipLog(pathToFile, item, stat, statGz) {
+    console.log(`Start Packing File: ${pathToFile}`);
+    packZip(pathToFile, item, stat, statGz);
+    console.log(`Done Packing File: ${pathToFile}`);
+}
+
+function packZip(pathToFile, item, stat, statGz) {
     const r = fs.createReadStream(pathToFile);
     const gzip = require("zlib").createGzip();
     const w = fs.createWriteStream(`${pathToFile}.gz`);
-    r.pipe(gzip).pipe(w);
+    r.pipe(gzip).pipe(w).on('close', () => console.log(`Modify ${item}: `, stat.mtime, `Modify ${item}.gz: `, statGz.mtime));
 }
