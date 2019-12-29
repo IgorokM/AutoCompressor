@@ -22,7 +22,9 @@ function run(root) {
         let insidePath = path.join(root, item);
         let stat = fs.statSync(insidePath);
         if (stat.isFile()) {
+            console.log(`Find file: ${item}`);
             if (hasArchive !== -1) {
+                console.log(`Find archive: ${item}.gz`);
                 let statGz = fs.statSync(`${insidePath}.gz`);
                 if (stat.mtimeMs > statGz.mtimeMs) {
                     packZipLog(insidePath, item, stat, statGz);
@@ -49,5 +51,7 @@ function packZip(pathToFile, item, stat, statGz) {
     const r = fs.createReadStream(pathToFile);
     const gzip = require("zlib").createGzip();
     const w = fs.createWriteStream(`${pathToFile}.gz`);
-    r.pipe(gzip).pipe(w).on('close', () => console.log(`Modify ${item}: `, stat.mtime, `Modify ${item}.gz: `, statGz.mtime));
+    const pipeW = r.pipe(gzip).pipe(w);
+    pipeW.on('close', () => console.log(`Modify ${item}: ${stat.mtime} - Modify ${item}.gz: ${statGz.mtime}`));
+    pipeW.on('error', () => exit(-1));
 }
