@@ -30,7 +30,7 @@ function run(root) {
                     packZipLog(insidePath, item, stat, statGz);
                 }
             } else {
-                packZipLog(insidePath);
+                packZipLog(insidePath, item, stat);
             }
             return true;
         } else if (stat.isDirectory()) {
@@ -41,7 +41,7 @@ function run(root) {
     return true;
 }
 
-function packZipLog(pathToFile, item, stat, statGz) {
+function packZipLog(pathToFile, item, stat, statGz=null) {
     console.log(`Start Packing File: ${pathToFile}`);
     packZip(pathToFile, item, stat, statGz);
     console.log(`Done Packing File: ${pathToFile}`);
@@ -52,6 +52,5 @@ function packZip(pathToFile, item, stat, statGz) {
     const gzip = require("zlib").createGzip();
     const w = fs.createWriteStream(`${pathToFile}.gz`);
     const pipeW = r.pipe(gzip).pipe(w);
-    pipeW.on('close', () => console.log(`Modify ${item}: ${stat.mtime} - Modify ${item}.gz: ${statGz.mtime}`));
-    pipeW.on('error', () => exit(-1));
+    pipeW.on('close', () => console.log(`Modify ${item}: ${stat.mtime} - Modify ${item}.gz: ${statGz!==null?statGz.mtime : 'Empty'}`));
 }
