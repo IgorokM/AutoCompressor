@@ -14,6 +14,7 @@ const path = require("path");
 })(process);
 
 function run(root) {
+    console.log(root);
     const insideRoot = fs.readdirSync(root);
     const stringInsideRoot = insideRoot.join();
     const hasArchive = stringInsideRoot.search(/.gz?/);

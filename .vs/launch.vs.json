@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "type": "nodeDbg",
+      "name": "index.js",
+      "project": "index.js"
+    }
+  ],
+  "defaults": {},
+  "version": "0.2.1"
+}

@@ -1,0 +1,2 @@
+E:\www\AutoCompressor\obj\Debug\FromExistingCode1.njsprojAssemblyReference.cache
+E:\www\AutoCompressor\bin\Microsoft.NodejsTools.WebRole.dll
