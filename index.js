@@ -14,30 +14,27 @@ const path = require("path");
 })(process);
 
 function run(root) {
-    console.log(root);
     const insideRoot = fs.readdirSync(root);
-    const stringInsideRoot = insideRoot.join();
-    const hasArchive = stringInsideRoot.search(/.gz?/);
     console.log(`Start Scanning ${root}`);
     for (let item of insideRoot) {
         let insidePath = path.join(root, item);
         let stat = fs.statSync(insidePath);
-        if (stat.isFile()) {
+        if (stat.isFile() && item.search(/.gz?/) === -1) {
             console.log(`Find file: ${item}`);
-            if (hasArchive !== -1) {
-                console.log(`Find archive: ${item}.gz`);
-                let statGz = fs.statSync(`${insidePath}.gz`);
+            let reg = new RegExp(`${item}.gz?`);
+            let archive = insideRoot.filter(file => file.search(reg) !== -1).join();
+            if (archive) {
+                console.log(`Find archive: ${archive}`);
+                let statGz = fs.statSync(path.join(root, archive));
                 if (stat.mtimeMs > statGz.mtimeMs) {
                     packZipLog(insidePath, item, stat, statGz);
                 }
             } else {
                 packZipLog(insidePath, item, stat);
             }
-            return true;
         } else if (stat.isDirectory()) {
             run(insidePath);
         }
-
     }
     return true;
 }
